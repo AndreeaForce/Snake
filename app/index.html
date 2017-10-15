@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear View Escape</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+    <meta name="keywords" content="Travel planning">
+    <meta name="description" content="One trip away, we create soul restoring fourneys that inspire you to be you">
+    
+    <link rel="stylesheet" href="temp/styles/styles.css">
+
+</head>
+    
+<body onload="startGame()">
+
+<header class="site-header">
+    <div class="wrapper">
+
+    </div>
+</header>
+    
+<footer class="site-footer">
+ 
+</footer>    
+    
+<script>
+    var snake;
+    var obstacle;
+    var gridTile = 20;
+    var tailTotal = 8;
+    var tail = [];
+    
+    function startGame() {
+        snake = new component(gridTile, gridTile, "white", 20, 0);   
+        obstacle = new component(gridTile, gridTile, "red", 100, 60);
+        gameArea.start();
+    }
+    
+    var gameArea = {
+        canvas : document.createElement("canvas"),
+        start : function() {
+            this.canvas.width = 400;
+            this.canvas.height = 400;
+            this.context = this.canvas.getContext("2d");
+            this.context.fillStyle = "grey";
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+            this.interval = setInterval(updateGameArea, 200); // will run the updateGameArea() function every 20th millisecond (50 times per second)
+            window.addEventListener('keyup', function (event) {
+                gameArea.key = event.keyCode;
+            })
+            window.addEventListener('keydown', function (event) {
+                gameArea.key = false;
+            })
+        },
+        clear : function() { // clears the entire canvas
+            this.context.fillStyle = "grey";
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);       
+        }
+    }
+    
+    function component(width, height, color, x, y) {
+        this.width = width;
+        this.height = height;
+        this.speedX = 0; // speed indicator
+        this.speedY = 0; // speed indicator
+        this.x = x;
+        this.y = y;
+        this.half = this.width/2;
+        this.tailTotal = 4;
+        this.tail = [];
+        this.draw1 = function() {
+            var ctx = gameArea.context;
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+         this.draw2 = function() { 
+            var ctx = gameArea.context;
+            ctx.fillStyle = color;
+            for (var i = 0; i < this.tail.length; i++) {
+                ctx.fillRect(this.tail[i].x, this.tail[i].y, gridTile-2, gridTile-2);
+                //if (this.tail[i].x==this.x && this.tail[i].y==this.y) {
+                    //this.tailTotal = 4;
+                //}
+            }
+             this.tail.push({x: this.x, y: this.y});
+             while(this.tail.length > this.tailTotal) {
+                 this.tail.shift();
+             }
+        }
+        this.newPos = function() {
+            this.x += this.speedX*gridTile;
+            this.y += this.speedY*gridTile;
+        }
+        this.eat = function() {
+            this.tailTotal++;
+            console.log(this.tailTotal);
+            
+            }
+        this.random = function() {
+            var random = Math.random() * (380 + 20);
+            this.x = random - (random % 20);
+            this.y = random - (random % 20);
+        }   
+        }
+   
+    function updateGameArea() {
+        gameArea.clear();
+        snake.speedX = 0;
+        snake.speedY = 0;
+        if (gameArea.key && gameArea.key == 37) { //sus
+            snake.speedX = -1; 
+        }
+        if (gameArea.key && gameArea.key == 39) { //jos
+            snake.speedX = 1; 
+        }
+        if (gameArea.key && gameArea.key == 38) { //stanga
+            snake.speedY = -1; 
+        }
+        if (gameArea.key && gameArea.key == 40) { //dreapta
+            snake.speedY = 1; 
+        }
+        if ((snake.x == obstacle.x) && (snake.y == obstacle.y)) {
+            snake.eat();
+            obstacle.random();
+        }
+        if (snake.x < 0) {
+            snake.x = gameArea.canvas.width - gridTile;
+        }
+        if (snake.x > gameArea.canvas.width) {
+            snake.x = - gridTile;
+        }
+        if (snake.y < 0) {
+            snake.y = gameArea.canvas.height;
+        }
+        if (snake.y > gameArea.canvas.height) {
+            snake.y = - gridTile;
+        }
+        console.log(snake.x);
+
+        snake.newPos();
+        snake.draw2();       
+        obstacle.draw1();    
+    }
+    
+  
+</script>
+</body>
+</html>

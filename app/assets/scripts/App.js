@@ -1,0 +1,16 @@
+class Person {
+    construct(fullName, favColor) {
+      this.name = fullName;
+      this.favoriteColor = favColor;  
+    }
+    
+    greet() {
+        console.log("Heloo my name is " + this.name + " and my favorite color is " + this.favoriteColor + ".");
+    }
+}
+
+var john = new Person("John Doe", "blue");
+    john.greet();
+
+var jane = new Person("Jane Smith", "green");
+    jane.greet();
